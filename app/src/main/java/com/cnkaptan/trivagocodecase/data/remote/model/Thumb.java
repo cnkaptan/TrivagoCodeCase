@@ -1,4 +1,4 @@
-package com.cnkaptan.trivagocodecase.model;
+package com.cnkaptan.trivagocodecase.data.remote.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,10 +6,10 @@ import android.os.Parcelable;
 /**
  * Created by cnkaptan on 20/08/16.
  */
-public class Banner implements Parcelable {
+public class Thumb implements Parcelable {
 
     /**
-     * full : https://walter.trakt.us/images/movies/000/000/120/banners/original/7065417461.jpg
+     * full : https://walter.trakt.us/images/movies/000/000/120/thumbs/original/6363cb8aeb.jpg
      */
 
     private String full;
@@ -32,22 +32,22 @@ public class Banner implements Parcelable {
         dest.writeString(this.full);
     }
 
-    public Banner() {
+    public Thumb() {
     }
 
-    protected Banner(Parcel in) {
+    protected Thumb(Parcel in) {
         this.full = in.readString();
     }
 
-    public static final Parcelable.Creator<Banner> CREATOR = new Parcelable.Creator<Banner>() {
+    public static final Parcelable.Creator<Thumb> CREATOR = new Parcelable.Creator<Thumb>() {
         @Override
-        public Banner createFromParcel(Parcel source) {
-            return new Banner(source);
+        public Thumb createFromParcel(Parcel source) {
+            return new Thumb(source);
         }
 
         @Override
-        public Banner[] newArray(int size) {
-            return new Banner[size];
+        public Thumb[] newArray(int size) {
+            return new Thumb[size];
         }
     };
 }

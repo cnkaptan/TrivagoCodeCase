@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TrivagoCodeCase</string>
+    <string name="search_icon_title">Search</string>
 </resources>

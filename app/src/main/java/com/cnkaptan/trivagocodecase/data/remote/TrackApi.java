@@ -1,7 +1,7 @@
-package com.cnkaptan.trivagocodecase;
+package com.cnkaptan.trivagocodecase.data.remote;
 
-import com.cnkaptan.trivagocodecase.model.Movie;
-import com.cnkaptan.trivagocodecase.model.SearchResult;
+import com.cnkaptan.trivagocodecase.data.remote.model.Movie;
+import com.cnkaptan.trivagocodecase.data.remote.model.SearchResult;
 
 import java.util.List;
 

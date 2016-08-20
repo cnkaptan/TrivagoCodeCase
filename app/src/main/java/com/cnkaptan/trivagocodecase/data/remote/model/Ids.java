@@ -1,4 +1,4 @@
-package com.cnkaptan.trivagocodecase.model;
+package com.cnkaptan.trivagocodecase.data.remote.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
