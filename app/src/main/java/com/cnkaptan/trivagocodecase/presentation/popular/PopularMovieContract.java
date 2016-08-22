@@ -14,9 +14,11 @@ public interface PopularMovieContract {
     interface View extends MvpView{
         void showError(Throwable t);
         void showInitDatas(List<Movie> movies);
+        void loadMoreSuccess(List<Movie> extraMovies);
     }
 
     interface Presenter extends MvpPresenter<View>{
         void initData();
+        void loadMore(int page);
     }
 }

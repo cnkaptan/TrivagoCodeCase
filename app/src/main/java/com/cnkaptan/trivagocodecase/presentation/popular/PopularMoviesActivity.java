@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.cnkaptan.trivagocodecase.R;
 import com.cnkaptan.trivagocodecase.data.remote.model.Movie;
 import com.cnkaptan.trivagocodecase.injection.Injection;
+import com.cnkaptan.trivagocodecase.util.OnLoadMoreListener;
 
 import java.util.List;
 
@@ -23,6 +25,7 @@ import rx.schedulers.Schedulers;
 
 public class PopularMoviesActivity extends AppCompatActivity implements PopularMovieContract.View {
 
+    private static final String TAG = PopularMoviesActivity.class.getSimpleName();
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.recycler_view_movies)
@@ -48,6 +51,15 @@ public class PopularMoviesActivity extends AppCompatActivity implements PopularM
         recyclerViewMovies.setLayoutManager(linearLayoutManager);
         popularMovieAdapter = new PopularMovieAdapter(null);
         recyclerViewMovies.setAdapter(popularMovieAdapter);
+
+
+        recyclerViewMovies.addOnScrollListener(new OnLoadMoreListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page) {
+
+                moviePresenter.loadMore(page);
+            }
+        });
     }
 
 
@@ -76,5 +88,12 @@ public class PopularMoviesActivity extends AppCompatActivity implements PopularM
         recyclerViewMovies.setVisibility(View.VISIBLE);
         textViewErrorMsg.setVisibility(View.GONE);
         popularMovieAdapter.setMovies(movies);
+    }
+
+    @Override
+    public void loadMoreSuccess(List<Movie> extraMovies) {
+        recyclerViewMovies.setVisibility(View.VISIBLE);
+        textViewErrorMsg.setVisibility(View.GONE);
+        popularMovieAdapter.addMovies(extraMovies);
     }
 }

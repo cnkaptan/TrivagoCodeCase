@@ -46,4 +46,27 @@ public class PopularMoviesPresenter extends BasePresenter<PopularMovieContract.V
                     }
                 }));
     }
+
+    @Override
+    public void loadMore(int page) {
+        addSubscription(repository.getPopularMovies(page)
+        .subscribeOn(ioSchedular)
+        .observeOn(mainSchedular)
+        .subscribe(new Subscriber<List<Movie>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                getView().showError(e);
+            }
+
+            @Override
+            public void onNext(List<Movie> movies) {
+                getView().loadMoreSuccess(movies);
+            }
+        }));
+    }
 }
