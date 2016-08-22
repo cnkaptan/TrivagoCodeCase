@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cnkaptan.trivagocodecase.PopularMoviesActivity">
+    tools:context=".presentation.popular.PopularMoviesActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -15,7 +15,7 @@
 
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_users"
+        android:id="@+id/recycler_view_movies"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
