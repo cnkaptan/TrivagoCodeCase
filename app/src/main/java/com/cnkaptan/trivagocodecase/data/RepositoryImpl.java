@@ -20,7 +20,7 @@ public class RepositoryImpl implements Repository {
 
     @Override
     public Observable<List<SearchResult>> searchMovies(String searchTerm) {
-        return null;
+        return trackApi.getSearchResult(searchTerm,TrackApi.TYPE,1,10);
     }
 
     @Override

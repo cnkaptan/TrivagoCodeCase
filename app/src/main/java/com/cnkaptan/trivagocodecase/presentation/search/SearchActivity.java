@@ -26,7 +26,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class SearchActivity extends AppCompatActivity implements SearchContract.View{
+public class SearchActivity extends AppCompatActivity implements SearchContract.View {
     private static final String TAG = SearchActivity.class.getSimpleName();
     SearchView searchView;
     @Bind(R.id.toolbar)
@@ -45,6 +45,28 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         repository = Injection.provideTrackTvRepo();
         searchPresenter = new SearchPresenter(repository, Schedulers.io(), AndroidSchedulers.mainThread());
         searchPresenter.attachView(this);
+
+//        repository.searchMovies("nemo")
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Subscriber<List<SearchResult>>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(List<SearchResult> searchResults) {
+//                        for (SearchResult searchResult: searchResults) {
+//                            Log.e(TAG,searchResult.getMovie().getTitle());
+//                        }
+//                    }
+//                });
     }
 
 
@@ -70,11 +92,11 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
                         .throttleLast(100, TimeUnit.MILLISECONDS)
                         .debounce(200, TimeUnit.MILLISECONDS)
                         .onBackpressureLatest()
-                        .subscribeOn(Schedulers.io())
-                        .switchMap(new Func1<CharSequence, Observable<List<SearchResult>>>() {
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .concatMap(new Func1<CharSequence, Observable<List<SearchResult>>>() {
                             @Override
                             public Observable<List<SearchResult>> call(CharSequence charSequence) {
-                                return repository.searchMovies(charSequence.toString());
+                                return repository.searchMovies(charSequence.toString()).subscribeOn(Schedulers.io());
                             }
                         })
                         .observeOn(AndroidSchedulers.mainThread())
@@ -86,14 +108,13 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.e(TAG,e.getMessage());
+                                e.printStackTrace();
                             }
 
                             @Override
                             public void onNext(List<SearchResult> searchResults) {
-                                for (SearchResult search :
-                                        searchResults) {
-                                    Log.e(TAG,search.getMovie().getTitle());
+                                for (SearchResult searchResult: searchResults) {
+                                    Log.e(TAG,searchResult.getMovie().getTitle());
                                 }
                             }
                         });
