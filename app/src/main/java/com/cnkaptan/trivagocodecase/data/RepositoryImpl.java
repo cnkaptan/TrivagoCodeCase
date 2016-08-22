@@ -25,6 +25,6 @@ public class RepositoryImpl implements Repository {
 
     @Override
     public Observable<List<Movie>> getPopularMovies(int page) {
-        return null;
+        return trackApi.getPopularMovies(1,TrackApi.EXTENDED);
     }
 }

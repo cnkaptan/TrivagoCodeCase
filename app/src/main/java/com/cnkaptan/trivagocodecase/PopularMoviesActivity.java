@@ -8,10 +8,19 @@ import android.view.Menu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.cnkaptan.trivagocodecase.data.remote.model.Movie;
+import com.cnkaptan.trivagocodecase.injection.Injection;
+import com.cnkaptan.trivagocodecase.presentation.popular.PopularMovieContract;
+import com.cnkaptan.trivagocodecase.presentation.popular.PopularMoviesPresenter;
+
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-public class PopularMoviesActivity extends AppCompatActivity {
+public class PopularMoviesActivity extends AppCompatActivity implements PopularMovieContract.View {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -21,14 +30,17 @@ public class PopularMoviesActivity extends AppCompatActivity {
     TextView textViewErrorMsg;
     @Bind(R.id.progress_bar)
     ProgressBar progressBar;
-
+    PopularMovieContract.Presenter moviePresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_popular_movies);
         ButterKnife.bind(this);
-
         setSupportActionBar(toolbar);
+
+        moviePresenter = new PopularMoviesPresenter(Injection.provideTrackTvRepo(), Schedulers.io(), AndroidSchedulers.mainThread());
+        moviePresenter.attachView(this);
+        moviePresenter.initData();
     }
 
 
@@ -37,5 +49,21 @@ public class PopularMoviesActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        moviePresenter.detachView();
+    }
+
+    @Override
+    public void showError(Throwable t) {
+
+    }
+
+    @Override
+    public void showInitDatas(List<Movie> movies) {
+
     }
 }
