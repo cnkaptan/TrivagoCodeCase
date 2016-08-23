@@ -2,12 +2,16 @@ package com.cnkaptan.trivagocodecase.presentation.search;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.cnkaptan.trivagocodecase.R;
 import com.cnkaptan.trivagocodecase.data.Repository;
@@ -16,14 +20,10 @@ import com.cnkaptan.trivagocodecase.injection.Injection;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class SearchActivity extends AppCompatActivity implements SearchContract.View {
@@ -31,9 +31,17 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     SearchView searchView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    @Bind(R.id.recycler_view_search_result)
+    RecyclerView recyclerViewSearchResult;
+    @Bind(R.id.text_view_error_msg)
+    TextView textViewErrorMsg;
+    @Bind(R.id.progress_bar)
+    ProgressBar progressBar;
 
-    SearchContract.Presenter searchPresenter;
     private Repository repository;
+    SearchContract.Presenter searchPresenter;
+    private SearchResultAdapter searchResultAdapter;
+    private String latestTerm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,27 +54,12 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         searchPresenter = new SearchPresenter(repository, Schedulers.io(), AndroidSchedulers.mainThread());
         searchPresenter.attachView(this);
 
-//        repository.searchMovies("nemo")
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Subscriber<List<SearchResult>>() {
-//                    @Override
-//                    public void onCompleted() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onNext(List<SearchResult> searchResults) {
-//                        for (SearchResult searchResult: searchResults) {
-//                            Log.e(TAG,searchResult.getMovie().getTitle());
-//                        }
-//                    }
-//                });
+
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerViewSearchResult.setLayoutManager(manager);
+        searchResultAdapter = new SearchResultAdapter(null);
+        recyclerViewSearchResult.setAdapter(searchResultAdapter);
     }
 
 
@@ -74,63 +67,55 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        final MenuItem searchMenuitem = menu.findItem(R.id.menu_search);
+        searchView = (SearchView) searchMenuitem.getActionView();
+        searchPresenter.setQueries(RxSearchView.queryTextChanges(searchView));
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_search:
-                searchView = (SearchView) item.getActionView();
-                RxSearchView.queryTextChanges(searchView)
-                        .filter(new Func1<CharSequence, Boolean>() {
-                            @Override
-                            public Boolean call(CharSequence charSequence) {
-                                return !TextUtils.isEmpty(charSequence);
-                            }
-                        })
-                        .throttleLast(100, TimeUnit.MILLISECONDS)
-                        .debounce(200, TimeUnit.MILLISECONDS)
-                        .onBackpressureLatest()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .concatMap(new Func1<CharSequence, Observable<List<SearchResult>>>() {
-                            @Override
-                            public Observable<List<SearchResult>> call(CharSequence charSequence) {
-                                return repository.searchMovies(charSequence.toString()).subscribeOn(Schedulers.io());
-                            }
-                        })
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<List<SearchResult>>() {
-                            @Override
-                            public void onCompleted() {
+        return super.onOptionsItemSelected(item);
+    }
 
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onNext(List<SearchResult> searchResults) {
-                                for (SearchResult searchResult: searchResults) {
-                                    Log.e(TAG,searchResult.getMovie().getTitle());
-                                }
-                            }
-                        });
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        searchPresenter.detachView();
     }
 
     @Override
     public void showError(Throwable t) {
+        textViewErrorMsg.setVisibility(View.VISIBLE);
+        recyclerViewSearchResult.setVisibility(View.GONE);
+        textViewErrorMsg.setText(t.getMessage());
+    }
+
+    @Override
+    public void showObservableSearchList(List<SearchResult> searchResults) {
+        searchResultAdapter.setSearchResults(searchResults);
+    }
+
+    @Override
+    public void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerViewSearchResult.setVisibility(View.GONE);
+        textViewErrorMsg.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideLoading() {
+        progressBar.setVisibility(View.GONE);
+        recyclerViewSearchResult.setVisibility(View.VISIBLE);
+        textViewErrorMsg.setVisibility(View.GONE);
 
     }
 
     @Override
-    public void receiveObservableSearchList(Observable<List<SearchResult>> listObservable) {
-
+    public void getLatestSearchString(String latestTerm) {
+        this.latestTerm = latestTerm;
+        Log.e(TAG,latestTerm);
     }
+
+
 }

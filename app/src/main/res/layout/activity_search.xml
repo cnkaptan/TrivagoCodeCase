@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cnkaptan.trivagocodecase.presentation.search.SearchActivity">
+    tools:context=".presentation.popular.PopularMoviesActivity">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -11,4 +12,35 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_search_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        />
+
+    <TextView
+        android:id="@+id/text_view_error_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:text="No Data has loaded"
+        android:layout_centerInParent="true"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        tools:visibility="visible" />
 </RelativeLayout>

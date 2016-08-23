@@ -15,10 +15,17 @@ public interface SearchContract {
 
     interface View extends MvpView{
         void showError(Throwable t);
-        void receiveObservableSearchList(Observable<List<SearchResult>> listObservable);
+
+        void showObservableSearchList(List<SearchResult> searchResults);
+
+        void showLoading();
+
+        void hideLoading();
+
+        void getLatestSearchString(String latestTerm);
     }
 
     interface Presenter extends MvpPresenter<View>{
-        void takeObservableSearchList(CharSequence charSequence);
+        void setQueries(Observable<CharSequence> queries);
     }
 }
