@@ -5,18 +5,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cnkaptan.trivagocodecase.R;
+import com.cnkaptan.trivagocodecase.TrackTvApplication;
+import com.cnkaptan.trivagocodecase.data.Repository;
 import com.cnkaptan.trivagocodecase.data.remote.model.Movie;
-import com.cnkaptan.trivagocodecase.injection.Injection;
 import com.cnkaptan.trivagocodecase.util.OnLoadMoreListener;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,6 +38,8 @@ public class PopularMoviesActivity extends AppCompatActivity implements PopularM
     ProgressBar progressBar;
     PopularMovieContract.Presenter moviePresenter;
     PopularMovieAdapter popularMovieAdapter;
+    @Inject Repository repository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +47,9 @@ public class PopularMoviesActivity extends AppCompatActivity implements PopularM
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        moviePresenter = new PopularMoviesPresenter(Injection.provideTrackTvRepo(), Schedulers.io(), AndroidSchedulers.mainThread());
+        ((TrackTvApplication)getApplication()).getmAppComponent().inject(this);
+
+        moviePresenter = new PopularMoviesPresenter(repository, Schedulers.io(), AndroidSchedulers.mainThread());
         moviePresenter.attachView(this);
         moviePresenter.initData();
 

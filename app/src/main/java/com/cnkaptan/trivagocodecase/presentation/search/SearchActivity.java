@@ -14,13 +14,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cnkaptan.trivagocodecase.R;
+import com.cnkaptan.trivagocodecase.TrackTvApplication;
 import com.cnkaptan.trivagocodecase.data.Repository;
 import com.cnkaptan.trivagocodecase.data.remote.model.SearchResult;
-import com.cnkaptan.trivagocodecase.injection.Injection;
 import com.cnkaptan.trivagocodecase.util.OnLoadMoreListener;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +41,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     @Bind(R.id.progress_bar)
     ProgressBar progressBar;
 
-    private Repository repository;
+    @Inject Repository repository;
     SearchContract.Presenter searchPresenter;
     private SearchResultAdapter searchResultAdapter;
     private String latestTerm;
@@ -52,7 +54,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        repository = Injection.provideTrackTvRepo();
+        ((TrackTvApplication)getApplication()).getmAppComponent().inject(this);
         searchPresenter = new SearchPresenter(repository, Schedulers.io(), AndroidSchedulers.mainThread());
         searchPresenter.attachView(this);
 
