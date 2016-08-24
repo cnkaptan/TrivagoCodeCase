@@ -15,6 +15,8 @@ public interface PopularMovieContract {
         void showError(Throwable t);
         void showInitDatas(List<Movie> movies);
         void loadMoreSuccess(List<Movie> extraMovies);
+        void showLoading();
+        void hideLoading();
     }
 
     interface Presenter extends MvpPresenter<View>{

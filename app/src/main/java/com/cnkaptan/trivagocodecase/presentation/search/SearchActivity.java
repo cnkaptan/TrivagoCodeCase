@@ -1,5 +1,8 @@
 package com.cnkaptan.trivagocodecase.presentation.search;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +21,8 @@ import com.cnkaptan.trivagocodecase.TrackTvApplication;
 import com.cnkaptan.trivagocodecase.data.Repository;
 import com.cnkaptan.trivagocodecase.data.remote.model.SearchResult;
 import com.cnkaptan.trivagocodecase.util.OnLoadMoreListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 
 import java.util.List;
@@ -47,6 +52,11 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     private String latestTerm;
     private OnLoadMoreListener onLoadMoreListener;
 
+
+    public static Intent newInstance(Context context){
+        return new Intent(context,SearchActivity.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,14 +82,33 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             }
         };
         recyclerViewSearchResult.addOnScrollListener(onLoadMoreListener);
+
+        Target homeTarget = new Target() {
+            @Override
+            public Point getPoint() {
+                // Get approximate position of home icon's center
+                int actionBarSize = toolbar.getHeight();
+                int x = (toolbar.getWidth()-actionBarSize/2);
+                int y = actionBarSize;
+                return new Point(x, y);
+            }
+        };
+        new ShowcaseView.Builder(this)
+                .setTarget(homeTarget)
+                .setContentTitle("Search Action")
+                .setContentText("To Start Click The Search Button and Write")
+                .withMaterialShowcase()
+                .setStyle(R.style.CustomShowcaseTheme)
+                .hideOnTouchOutside()
+                .build();
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        final MenuItem searchMenuitem = menu.findItem(R.id.menu_search);
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        final MenuItem searchMenuitem = menu.findItem(R.id.item_menu_search);
         searchView = (SearchView) searchMenuitem.getActionView();
         searchPresenter.setQueries(RxSearchView.queryTextChanges(searchView));
         return true;
@@ -115,6 +144,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     @Override
     public void showLoading() {
+        Log.e(TAG,"Show Loading");
         progressBar.setVisibility(View.VISIBLE);
         recyclerViewSearchResult.setVisibility(View.GONE);
         textViewErrorMsg.setVisibility(View.GONE);

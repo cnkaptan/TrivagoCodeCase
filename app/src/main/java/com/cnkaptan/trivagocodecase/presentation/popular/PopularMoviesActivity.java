@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.cnkaptan.trivagocodecase.R;
 import com.cnkaptan.trivagocodecase.TrackTvApplication;
 import com.cnkaptan.trivagocodecase.data.Repository;
 import com.cnkaptan.trivagocodecase.data.remote.model.Movie;
+import com.cnkaptan.trivagocodecase.presentation.search.SearchActivity;
 import com.cnkaptan.trivagocodecase.util.OnLoadMoreListener;
 
 import java.util.List;
@@ -72,8 +74,19 @@ public class PopularMoviesActivity extends AppCompatActivity implements PopularM
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_popular, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.item_menu_search:
+                startActivity(SearchActivity.newInstance(this));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -102,4 +115,21 @@ public class PopularMoviesActivity extends AppCompatActivity implements PopularM
         textViewErrorMsg.setVisibility(View.GONE);
         popularMovieAdapter.addMovies(extraMovies);
     }
+
+
+    @Override
+    public void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerViewMovies.setVisibility(View.GONE);
+        textViewErrorMsg.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideLoading() {
+        progressBar.setVisibility(View.GONE);
+        recyclerViewMovies.setVisibility(View.VISIBLE);
+        textViewErrorMsg.setVisibility(View.GONE);
+
+    }
+
 }

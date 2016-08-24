@@ -21,13 +21,19 @@ public class PopularMoviesPresenter extends BasePresenter<PopularMovieContract.V
 
     @Override
     public void initData() {
-
+        getView().showLoading();
         addSubscription(repository.getPopularMovies(1)
                 .subscribeOn(ioSchedular)
                 .observeOn(mainSchedular)
                 .subscribe(
-                        movies -> getView().showInitDatas(movies),
-                        throwable -> getView().showError(throwable),
+                        movies -> {
+                            getView().hideLoading();
+                            getView().showInitDatas(movies);
+                        },
+                        throwable -> {
+                            getView().hideLoading();
+                            getView().showError(throwable);
+                        },
                         () -> {
                         }));
     }

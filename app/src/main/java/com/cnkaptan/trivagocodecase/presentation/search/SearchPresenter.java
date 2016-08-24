@@ -29,14 +29,22 @@ public class SearchPresenter extends BasePresenter<SearchContract.View> implemen
 
     @Override
     public void setQueries(Observable<CharSequence> queries) {
-        getView().showLoading();
         addSubscription(queries
-                .filter(charSequence -> !TextUtils.isEmpty(charSequence))
+                .filter(charSequence -> {
+                    if (!TextUtils.isEmpty(charSequence)){
+                        getView().showLoading();
+                        return true;
+                    }else{
+                        getView().hideLoading();
+                        return false;
+                    }
+                })
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .debounce(200, TimeUnit.MILLISECONDS)
                 .onBackpressureLatest()
                 .observeOn(mainScheduler)
                 .concatMap(charSequence -> {
+                    Log.e(TAG,charSequence.toString());
                     getView().setLatestSearchString(charSequence.toString());
                     textQuery = charSequence.toString();
                     return repository.searchMovies(charSequence.toString()).subscribeOn(ioScheduler);

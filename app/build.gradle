@@ -61,4 +61,6 @@ dependencies {
     // Retrofit RxJava
     compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
     compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.4.0'
+
+    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 }

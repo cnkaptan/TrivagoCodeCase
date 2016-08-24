@@ -16,7 +16,7 @@ import rx.Observable;
 public interface TrackApi {
 
     String BASE_URL = "https://api.trakt.tv";
-    String EXTENDED = "full,image";
+    String EXTENDED = "full,images";
     String TYPE = "movie";
 
     @GET("/movies/popular")
