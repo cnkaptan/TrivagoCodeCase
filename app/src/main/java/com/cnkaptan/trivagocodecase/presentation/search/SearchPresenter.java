@@ -1,6 +1,7 @@
 package com.cnkaptan.trivagocodecase.presentation.search;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.cnkaptan.trivagocodecase.data.Repository;
 import com.cnkaptan.trivagocodecase.data.remote.model.SearchResult;
@@ -19,8 +20,10 @@ import rx.functions.Func1;
  * Created by cihankaptan on 22/08/16.
  */
 public class SearchPresenter extends BasePresenter<SearchContract.View> implements SearchContract.Presenter {
+    private static final String TAG = SearchPresenter.class.getSimpleName();
     Scheduler ioScheduler, mainScheduler;
     Repository repository;
+    private String textQuery;
 
     public SearchPresenter(Repository repository, Scheduler ioScheduler, Scheduler mainScheduler) {
         this.ioScheduler = ioScheduler;
@@ -45,7 +48,8 @@ public class SearchPresenter extends BasePresenter<SearchContract.View> implemen
                 .concatMap(new Func1<CharSequence, Observable<List<SearchResult>>>() {
                     @Override
                     public Observable<List<SearchResult>> call(CharSequence charSequence) {
-                        getView().getLatestSearchString(charSequence.toString());
+                        getView().setLatestSearchString(charSequence.toString());
+                        textQuery = charSequence.toString();
                         return repository.searchMovies(charSequence.toString()).subscribeOn(ioScheduler);
                     }
                 })
@@ -66,6 +70,30 @@ public class SearchPresenter extends BasePresenter<SearchContract.View> implemen
                     public void onNext(List<SearchResult> searchResults) {
                         getView().hideLoading();
                         getView().showObservableSearchList(searchResults);
+                    }
+                }));
+    }
+
+    @Override
+    public void loadNextPage(final int page) {
+        Log.e(TAG,String.format("Text = %s Page = %d",textQuery,page));
+        addSubscription(repository.searchMovies(textQuery, page)
+                .subscribeOn(ioScheduler)
+                .observeOn(mainScheduler)
+                .subscribe(new Subscriber<List<SearchResult>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(e);
+                    }
+
+                    @Override
+                    public void onNext(List<SearchResult> searchResults) {
+                        getView().addObservableSearchList(searchResults);
                     }
                 }));
     }

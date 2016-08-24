@@ -38,5 +38,10 @@ public abstract class OnLoadMoreListener extends RecyclerView.OnScrollListener {
             loading = true;
         }
     }
+
+    public void clearPage(){
+        this.page = 1;
+        this.previousTotal = 0;
+    }
     public abstract void onLoadMore(int page);
 }

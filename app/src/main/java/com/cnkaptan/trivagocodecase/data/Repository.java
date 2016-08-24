@@ -13,5 +13,7 @@ import rx.Observable;
 public interface Repository {
     Observable<List<SearchResult>> searchMovies(String searchTerm);
 
+    Observable<List<SearchResult>> searchMovies(String searchTerm,int page);
+
     Observable<List<Movie>> getPopularMovies(int page);
 }

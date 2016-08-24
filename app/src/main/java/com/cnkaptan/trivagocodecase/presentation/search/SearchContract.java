@@ -18,14 +18,17 @@ public interface SearchContract {
 
         void showObservableSearchList(List<SearchResult> searchResults);
 
+        void addObservableSearchList(List<SearchResult> searchResults);
+
         void showLoading();
 
         void hideLoading();
 
-        void getLatestSearchString(String latestTerm);
+        void setLatestSearchString(String latestTerm);
     }
 
     interface Presenter extends MvpPresenter<View>{
         void setQueries(Observable<CharSequence> queries);
+        void loadNextPage(int page);
     }
 }

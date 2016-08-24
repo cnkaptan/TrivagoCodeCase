@@ -17,6 +17,7 @@ import com.cnkaptan.trivagocodecase.R;
 import com.cnkaptan.trivagocodecase.data.Repository;
 import com.cnkaptan.trivagocodecase.data.remote.model.SearchResult;
 import com.cnkaptan.trivagocodecase.injection.Injection;
+import com.cnkaptan.trivagocodecase.util.OnLoadMoreListener;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     SearchContract.Presenter searchPresenter;
     private SearchResultAdapter searchResultAdapter;
     private String latestTerm;
+    private OnLoadMoreListener onLoadMoreListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,14 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         recyclerViewSearchResult.setLayoutManager(manager);
         searchResultAdapter = new SearchResultAdapter(null);
         recyclerViewSearchResult.setAdapter(searchResultAdapter);
+
+        onLoadMoreListener = new OnLoadMoreListener(manager) {
+            @Override
+            public void onLoadMore(int page) {
+                searchPresenter.loadNextPage(page);
+            }
+        };
+        recyclerViewSearchResult.addOnScrollListener(onLoadMoreListener);
     }
 
 
@@ -97,6 +107,11 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     @Override
+    public void addObservableSearchList(List<SearchResult> searchResults) {
+        searchResultAdapter.addSearchResults(searchResults);
+    }
+
+    @Override
     public void showLoading() {
         progressBar.setVisibility(View.VISIBLE);
         recyclerViewSearchResult.setVisibility(View.GONE);
@@ -112,9 +127,10 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     @Override
-    public void getLatestSearchString(String latestTerm) {
+    public void setLatestSearchString(String latestTerm) {
         this.latestTerm = latestTerm;
         Log.e(TAG,latestTerm);
+        onLoadMoreListener.clearPage();
     }
 
 

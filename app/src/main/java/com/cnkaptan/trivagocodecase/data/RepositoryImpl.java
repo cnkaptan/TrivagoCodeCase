@@ -24,6 +24,11 @@ public class RepositoryImpl implements Repository {
     }
 
     @Override
+    public Observable<List<SearchResult>> searchMovies(String searchTerm,int page) {
+        return trackApi.getSearchResult(searchTerm,TrackApi.TYPE,page,10);
+    }
+
+    @Override
     public Observable<List<Movie>> getPopularMovies(int page) {
         return trackApi.getPopularMovies(page,TrackApi.EXTENDED);
     }
