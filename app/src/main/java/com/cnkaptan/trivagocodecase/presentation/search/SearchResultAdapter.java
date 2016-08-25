@@ -3,6 +3,7 @@ package com.cnkaptan.trivagocodecase.presentation.search;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import butterknife.ButterKnife;
  */
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchViewHolder> {
 
+    private static final String TAG = SearchResultAdapter.class.getSimpleName();
     private List<SearchResult> results;
     private Context context;
 
@@ -55,8 +57,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             holder.tvMovieTitle.setText(movie.getTitle());
             Picasso.with(context).load(movie.getImages().getPoster().getThumb()).into(holder.ivMovieImage);
 
-            if (!TextUtils.isEmpty(movie.getOverview()))
+            if (!TextUtils.isEmpty(movie.getOverview())){
                 holder.tvMoviewOverview.setText(movie.getOverview());
+            }else{
+                holder.tvMoviewOverview.setVisibility(View.GONE);
+            }
 
 
     }

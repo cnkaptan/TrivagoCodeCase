@@ -62,8 +62,11 @@ public class PopularMovieAdapter extends RecyclerView.Adapter<PopularMovieAdapte
                 movie.getImages().getThumb().getFull() != null){
             Picasso.with(context).load(movie.getImages().getThumb().getFull()).into(holder.ivMovieImage);
         }
-        if (!TextUtils.isEmpty(movie.getOverview()))
+        if (!TextUtils.isEmpty(movie.getOverview())){
             holder.tvMoviewOverview.setText(movie.getOverview());
+        }else{
+            holder.tvMoviewOverview.setVisibility(View.GONE);
+        }
 
     }
 

@@ -218,4 +218,12 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "title='" + title + '\'' +
+                ", overview='" + overview + '\'' +
+                '}';
+    }
 }

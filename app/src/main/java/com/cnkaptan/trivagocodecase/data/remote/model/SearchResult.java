@@ -76,4 +76,11 @@ public class SearchResult implements Parcelable {
             return new SearchResult[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "SearchResult{" +
+                "movie=" + movie +
+                '}';
+    }
 }
